@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Feed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .feed-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .feed-header h2 {
+            color: #6a0dad;
+            font-size: 2rem;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .blog-card h3 {
+            color: #6a0dad;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .blog-card p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .blog-card small {
+            display: block;
+            margin-top: 10px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        a.btn {
+            display: inline-block;
+            background-color: #6a0dad;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        a.btn:hover {
+            background-color: #5a0099;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% load tz %}
+        <div class="feed-header">
+            <h2>User Feed</h2>
+            <p>Explore notices from the community.</p>
+        </div>
+        {% for blog in blogs %}
+            <div class="blog-card">
+                <h3>{{ blog.title }}</h3>
+                <p>{{ blog.content }}</p>
+                <small>by {{ blog.author }} on {{ blog.created_at|localtime|date:"d-m-Y h:i A" }}</small>
+            </div>
+        {% empty %}
+            <p>No notices available at the moment. <a href="{% url 'create_blog' %}" class="btn">Create a New Notice</a></p>
+        {% endfor %}
+    </div>
+</body>
+</html>
