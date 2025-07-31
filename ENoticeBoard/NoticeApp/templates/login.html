@@ -1,71 +1,228 @@
-<!-- templates/login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Notice Board </title>
+    <title>Login & Register - Notice Board</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            background: #f0f0f0;
         }
-        .login-container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 300px;
+
+        .container {
+            position: relative;
+            width: 850px;
+            height: 550px;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
-        h2 {
+
+        /* Forms Section */
+        .form-container {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            padding: 50px;
+            transition: all 0.6s ease-in-out;
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .form-container h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
             text-align: center;
             color: #333;
         }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+
         input {
             margin: 10px 0;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s ease;
         }
+
+        input:focus {
+            border-color: #a782e3;
+            outline: none;
+            box-shadow: 0 0 5px rgba(167, 130, 227, 0.5);
+        }
+
+        /* Attractive Buttons */
         button {
-            background-color: #6a0dad;
-            color: white;
-            padding: 10px;
+            margin-top: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, #a782e3, #8f6ed5);
             border: none;
-            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 25px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.4s ease-in-out;
+            box-shadow: 0 5px 15px rgba(167, 130, 227, 0.4);
         }
+
         button:hover {
-            background-color: #6a0dad;
+            background: linear-gradient(135deg, #8f6ed5, #a782e3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(167, 130, 227, 0.6);
         }
-        .error {
-            color: red;
+
+        /* Overlay Section (Curved Background) */
+        .overlay-container {
+            position: absolute;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: #a782e3;
+            border-radius: 150px 0 0 150px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            padding: 40px;
+            transition: all 0.6s ease-in-out;
+            z-index: 2;
+        }
+
+        .overlay-container.full-screen {
+            width: 100%;
+            border-radius: 0;
+            transition: all 0.4s ease-in-out;
+        }
+
+        .overlay-container h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .overlay-container p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .overlay-container button {
+            background: #fff;
+            color: #a782e3;
+            font-weight: bold;
+            box-shadow: none;
+        }
+
+        .overlay-container button:hover {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        /* Sliding Effect */
+        .register-form {
+            left: 100%;
+            opacity: 0;
+        }
+
+        .container.active .login-form {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .container.active .register-form {
+            transform: translateX(-100%);
+            opacity: 1;
+        }
+
+        .container.active .overlay-container {
+            transform: translateX(-100%);
+            border-radius: 0 150px 150px 0;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login to Notice Board</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+    <div class="container" id="container">
+        <!-- Login Form -->
+        <div class="form-container login-form">
+            <form method="post">
+                {% csrf_token %}
+                <h2>Login</h2>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <!-- Register Form -->
+        <div class="form-container register-form">
+            <form>
+                <h2>Register</h2>
+                <input type="text" placeholder="Username" required>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <!-- Overlay (Curved Background) -->
+        <div class="overlay-container" id="overlay">
+            <h2 id="overlayTitle">Hello, Welcome!</h2>
+            <p id="overlayText">Don't have an account? Register now!</p>
+            <button id="toggleBtn">Register</button>
+        </div>
     </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const overlay = document.getElementById('overlay');
+        const overlayTitle = document.getElementById('overlayTitle');
+        const overlayText = document.getElementById('overlayText');
+
+        let isRegister = false;
+
+        toggleBtn.addEventListener('click', () => {
+            // First expand purple overlay
+            overlay.classList.add('full-screen');
+
+            setTimeout(() => {
+                isRegister = !isRegister;
+                container.classList.toggle('active');
+
+                if (isRegister) {
+                    overlayTitle.innerText = "Welcome Back!";
+                    overlayText.innerText = "Already have an account? Login now!";
+                    toggleBtn.innerText = "Login";
+                } else {
+                    overlayTitle.innerText = "Hello, Welcome!";
+                    overlayText.innerText = "Don't have an account? Register now!";
+                    toggleBtn.innerText = "Register";
+                }
+
+                // Shrink back purple overlay after transition
+                setTimeout(() => {
+                    overlay.classList.remove('full-screen');
+                }, 400);
+            }, 300);
+        });
+    </script>
 </body>
 </html>

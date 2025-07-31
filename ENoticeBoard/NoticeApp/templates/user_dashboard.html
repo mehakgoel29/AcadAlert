@@ -1,81 +1,401 @@
-<!-- templates/user_dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - BlogApp</title>
+    <title>User Dashboard - eNotice</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        header {
-            background-color:#6a0dad;
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background-color: #a782e3;
+            height: 100vh;
             color: white;
-            padding: 1rem;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 4px 0 15px rgba(167, 130, 227, 0.3);
+            overflow: hidden;
         }
-        nav ul {
-            list-style-type: none;
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .sidebar ul {
+            list-style: none;
             padding: 0;
+            margin: 0;
         }
-        nav ul li {
-            display: inline;
-            margin-right: 10px;
+
+        .sidebar ul li {
+            margin: 0;
+            position: relative;
+            overflow: hidden;
         }
-        nav ul li a {
+
+        .sidebar ul li::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .sidebar ul li:hover::before {
+            left: 100%;
+        }
+
+        .sidebar ul li a {
             color: white;
             text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            border-left: 3px solid transparent;
+            font-weight: 500;
         }
-        .content {
-            background-color: white;
+
+        .sidebar ul li a::after {
+            content: '\f054';
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%) translateX(10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #fff;
+            padding-left: 30px;
+            transform: translateX(5px);
+        }
+
+        .sidebar ul li a:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .sidebar ul li a i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar ul li.active a {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #fff;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        /* Main layout */
+        .main-wrapper {
+            display: flex;
+            margin-left: 240px;
             padding: 20px;
-            margin-top: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            gap: 30px;
         }
+
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #fff 0%, #f8f6ff 100%);
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(167, 130, 227, 0.15);
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(167, 130, 227, 0.1), transparent);
+            transition: left 1s ease;
+        }
+
+        .top-bar:hover::before {
+            left: 100%;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 28px;
+            background: linear-gradient(45deg, #a782e3, #8b5fbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 5px rgba(167, 130, 227, 0.3)); }
+            100% { filter: drop-shadow(0 0 10px rgba(167, 130, 227, 0.5)); }
+        }
+
+        /* Notice Card */
+        .notice-card {
+            background: linear-gradient(135deg, #fff 0%, #fafbff 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(167, 130, 227, 0.1);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(167, 130, 227, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notice-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #a782e3, #8b5fbf);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .notice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(167, 130, 227, 0.2);
+        }
+
+        .notice-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* Buttons */
         .btn {
             display: inline-block;
-            background-color:#6a0dad;
+            background: linear-gradient(45deg, #a782e3, #9b70d9);
             color: white;
-            padding: 10px 15px;
+            padding: 12px 20px;
             text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            font-weight: 600;
         }
+
         .btn:hover {
-            background-color:#6a0dad;
+            background: linear-gradient(45deg, #9b70d9, #8b5fbf);
+            transform: translateY(-2px);
+        }
+
+        /* Floating Button */
+        .create-notice-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #a782e3, #9b70d9);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(167, 130, 227, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .create-notice-fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: linear-gradient(45deg, #9b70d9, #8b5fbf);
+        }
+
+        /* Calendar */
+        .calendar-widget {
+            flex: 1;
+            max-width: 320px;
+        }
+
+        .calendar-container {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #a782e3;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6a0dad;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f5f0fb;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .calendar-day:hover {
+            background: #a782e3;
+            color: white;
         }
     </style>
 </head>
+
 <body>
-    <header>
-        <div class="container">
-            <h1>Welcome, {{ user.username }}</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'user_dashboard' %}">Dashboard</a></li>
-                    <li><a href="{% url 'create_blog' %}">Create Notice</a></li>
-                    <li><a href="{% url 'user_feed' %}">My Notices</a></li>
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                </ul>
-            </nav>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>AcadAlert</h2>
         </div>
-    </header>
-    
-    <div class="container">
-        <div class="content">
-            <h2>Your Dashboard</h2>
-            <p>Here you can see your recent activity and notices.</p>
-            <a href="{% url 'create_blog' %}" class="btn">Create New Notice</a>
+        <ul>
+            <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li><a href="{% url 'create_blog' %}"><i class="fas fa-plus-circle"></i><span>Create Notice</span></a></li>
+            <li><a href="{% url 'user_feed' %}"><i class="fas fa-clipboard-list"></i><span>My Notices</span></a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout(event)"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+        </ul>
+    </div>
+
+    <div class="main-wrapper">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1>Welcome, {{user.username}}</h1>
+            </div>
+
+            <div class="notice-card">
+                <h3>Your Dashboard</h3>
+                <p>Here you can see your recent activity and notices.</p>
+                <a href="{% url 'create_blog' %}" class="btn">Create New Notice</a>
+            </div>
+
+            <div class="notice-card">
+                <h3>Important Meeting Reminder</h3>
+                <p>Don't forget about the quarterly review meeting scheduled for tomorrow.</p>
+            </div>
+        </div>
+
+        <!-- Calendar -->
+        <div class="calendar-widget">
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h3 id="calendarMonthYear">July 2025</h3>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
         </div>
     </div>
+
+    <button class="create-notice-fab" title="Create New Notice" onclick="window.location.href='{% url 'create_blog' %}'">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <script>
+        // Highlight active menu item based on current URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentUrl = window.location.href;
+            document.querySelectorAll('.sidebar ul li a').forEach(link => {
+                if (currentUrl.includes(link.getAttribute('href'))) {
+                    link.parentElement.classList.add('active');
+                }
+            });
+        });
+
+        // Logout confirmation
+        function confirmLogout(event) {
+            if (!confirm("Are you sure you want to logout?")) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        // Calendar Rendering
+        const calendarGrid = document.getElementById("calendarGrid");
+        const monthYearLabel = document.getElementById("calendarMonthYear");
+        let currentDate = new Date();
+
+        function renderCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"];
+            monthYearLabel.textContent = `${monthNames[month]} ${year}`;
+            const startDay = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            calendarGrid.innerHTML = "";
+            for (let i = 0; i < (startDay + 7) % 7; i++) {
+                calendarGrid.appendChild(document.createElement("div"));
+            }
+            for (let day = 1; day <= totalDays; day++) {
+                const cell = document.createElement("div");
+                cell.className = "calendar-day";
+                cell.innerText = day;
+                calendarGrid.appendChild(cell);
+            }
+        }
+        renderCalendar(currentDate);
+    </script>
 </body>
 </html>
