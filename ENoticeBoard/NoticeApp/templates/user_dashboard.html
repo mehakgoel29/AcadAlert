@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - eNotice</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home_app_logo" />
 
     <style>
         * {
@@ -19,7 +21,7 @@
             display: flex;
         }
 
-        /* Sidebar */
+        /* Enhanced Sidebar */
         .sidebar {
             width: 220px;
             background-color: #a782e3;
@@ -40,20 +42,28 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
             pointer-events: none;
         }
 
         .sidebar-header {
             padding: 0 20px 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 20px;
         }
 
         .sidebar-header h2 {
             font-size: 24px;
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-weight: 600;
+        }
+
+        .sidebar-header .logo-icon {
+            font-size: 24px;
+            color: #fff;
         }
 
         .sidebar ul {
@@ -75,7 +85,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.6s ease;
         }
 
@@ -90,22 +100,23 @@
             display: flex;
             align-items: center;
             padding: 16px 20px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             border-left: 3px solid transparent;
             font-weight: 500;
         }
 
         .sidebar ul li a::after {
-            content: '\f054';
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
+            content: '';
             position: absolute;
             right: 20px;
             top: 50%;
             transform: translateY(-50%) translateX(10px);
             opacity: 0;
             transition: all 0.3s ease;
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            content: '\f054';
             font-size: 12px;
         }
 
@@ -127,12 +138,73 @@
             width: 20px;
             text-align: center;
             transition: all 0.3s ease;
+            color: #fff;
         }
 
+        .sidebar ul li a:hover i {
+            transform: scale(1.2);
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .sidebar ul li a span {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar ul li a:hover span {
+            letter-spacing: 0.5px;
+        }
+
+        /* Active state */
         .sidebar ul li.active a {
             background: rgba(255, 255, 255, 0.2);
             border-left-color: #fff;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Icon animations */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .sidebar ul li a:hover i.fa-chart-line {
+            animation: pulse 1s infinite;
+        }
+
+        .sidebar ul li a:hover i.fa-plus-circle {
+            transform: rotate(180deg) scale(1.2);
+        }
+
+        .sidebar ul li a:hover i.fa-bullhorn {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-2px);
+            }
+
+            75% {
+                transform: translateX(2px);
+            }
+        }
+
+        .sidebar ul li a:hover i.fa-sign-out-alt {
+            transform: translateX(3px) scale(1.1);
         }
 
         /* Main layout */
@@ -144,13 +216,19 @@
             gap: 30px;
         }
 
-        /* Top Bar */
+        /* Main content */
+        .main-content {
+            flex: 2;
+        }
+
+        /* Enhanced Welcome Section */
         .top-bar {
             background: linear-gradient(135deg, #fff 0%, #f8f6ff 100%);
             padding: 20px 25px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(167, 130, 227, 0.15);
             margin-bottom: 25px;
+            border: 1px solid rgba(167, 130, 227, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -176,15 +254,22 @@
             background: linear-gradient(45deg, #a782e3, #8b5fbf);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: glow 3s ease-in-out infinite alternate;
+            background-clip: text;
+            font-weight: 700;
+            animation: welcomeGlow 3s ease-in-out infinite alternate;
         }
 
-        @keyframes glow {
-            0% { filter: drop-shadow(0 0 5px rgba(167, 130, 227, 0.3)); }
-            100% { filter: drop-shadow(0 0 10px rgba(167, 130, 227, 0.5)); }
+        @keyframes welcomeGlow {
+            0% {
+                filter: drop-shadow(0 0 5px rgba(167, 130, 227, 0.3));
+            }
+
+            100% {
+                filter: drop-shadow(0 0 10px rgba(167, 130, 227, 0.5));
+            }
         }
 
-        /* Notice Card */
+        /* Enhanced Notice Cards */
         .notice-card {
             background: linear-gradient(135deg, #fff 0%, #fafbff 100%);
             border-radius: 16px;
@@ -192,7 +277,7 @@
             padding: 25px;
             margin-bottom: 25px;
             border: 1px solid rgba(167, 130, 227, 0.1);
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -212,13 +297,38 @@
         .notice-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(167, 130, 227, 0.2);
+            border-color: rgba(167, 130, 227, 0.3);
         }
 
         .notice-card:hover::before {
             transform: scaleX(1);
         }
 
-        /* Buttons */
+        .notice-card h3 {
+            margin: 0 0 15px;
+            color: #a782e3;
+            font-size: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .notice-card:hover h3 {
+            color: #8b5fbf;
+            transform: translateX(3px);
+        }
+
+        .notice-card p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .notice-card:hover p {
+            color: #555;
+        }
+
+        /* Enhanced Button */
         .btn {
             display: inline-block;
             background: linear-gradient(45deg, #a782e3, #9b70d9);
@@ -226,16 +336,40 @@
             padding: 12px 20px;
             text-decoration: none;
             border-radius: 25px;
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 15px;
             font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(167, 130, 227, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.6s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .btn:hover {
             background: linear-gradient(45deg, #9b70d9, #8b5fbf);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(167, 130, 227, 0.4);
         }
 
-        /* Floating Button */
+        /* Create Notice Floating Button */
         .create-notice-fab {
             position: fixed;
             bottom: 30px;
@@ -249,15 +383,25 @@
             font-size: 24px;
             cursor: pointer;
             box-shadow: 0 8px 25px rgba(167, 130, 227, 0.4);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
         }
 
         .create-notice-fab:hover {
-            transform: scale(1.1) rotate(90deg);
             background: linear-gradient(45deg, #9b70d9, #8b5fbf);
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 35px rgba(167, 130, 227, 0.5);
         }
 
-        /* Calendar */
+        .create-notice-fab i {
+            transition: transform 0.3s ease;
+        }
+
+        .create-notice-fab:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Calendar Right Side */
         .calendar-widget {
             flex: 1;
             max-width: 320px;
@@ -267,7 +411,7 @@
             background-color: #fff;
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .calendar-header {
@@ -277,50 +421,128 @@
             color: #a782e3;
         }
 
+        .calendar-header h3 {
+            font-size: 20px;
+        }
+
+        .calendar-header button {
+            border: 1px solid #a782e3;
+            background-color: white;
+            color: #6a0dad;
+            padding: 6px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .calendar-header button:hover {
+            background-color: #a782e3;
+            color: white
+        }
+
+        .calendar-header .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .calendar-header .nav-buttons button {
+            background-color: #a782e3;
+            color: white;
+            border: none;
+            font-size: 18px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .calendar-header .nav-buttons button:hover {
+            background-color: #9765e7;
+            transform: scale(1.1);
+        }
+
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 8px;
             margin-top: 20px;
-            font-size: 14px;
             color: #6a0dad;
+            font-size: 14px;
         }
 
         .calendar-day {
             text-align: center;
-            padding: 10px;
+            padding: 10px 0;
             border-radius: 8px;
-            background: #f5f0fb;
+            background-color: #f5f0fb;
             cursor: pointer;
             transition: background 0.3s;
         }
 
         .calendar-day:hover {
-            background: #a782e3;
+            background-color: #a782e3;
             color: white;
+        }
+
+        /* Notices by Date */
+        #noticesByDate {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #noticesByDate h3 {
+            margin-top: 0;
+            color: #6a0dad;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-wrapper {
+                margin-left: 220px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar -->
+
+    <!-- Enhanced Sidebar Navigation -->
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>AcadAlert</h2>
         </div>
         <ul>
-            <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li class="active"><a href="{% url 'user_dashboard' %}"><i
+                        class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
             <li><a href="{% url 'create_blog' %}"><i class="fas fa-plus-circle"></i><span>Create Notice</span></a></li>
-            <li><a href="{% url 'user_feed' %}"><i class="fas fa-clipboard-list"></i><span>My Notices</span></a></li>
-            <li><a href="{% url 'logout' %}" onclick="return confirmLogout(event)"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+            <li><a href="{% url 'user_feed' %}"><i class="fas fa-clipboard-list logo-icon"></i><span>My
+                        Notices</span></a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout(event)"><i
+                        class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
         </ul>
     </div>
 
     <div class="main-wrapper">
-        <!-- Main Content -->
+        <!-- Center Content -->
         <div class="main-content">
             <div class="top-bar">
                 <h1>Welcome, {{user.username}}</h1>
+            </div>
+
+            <div id="noticesByDate" style="display:none;">
+                <h3>Notices on <span id="selectedDate"></span></h3>
+                <ul id="noticesList"></ul>
             </div>
 
             <div class="notice-card">
@@ -329,28 +551,108 @@
                 <a href="{% url 'create_blog' %}" class="btn">Create New Notice</a>
             </div>
 
+            <!-- Example notices -->
             <div class="notice-card">
                 <h3>Important Meeting Reminder</h3>
-                <p>Don't forget about the quarterly review meeting scheduled for tomorrow.</p>
+                <p>Don't forget about the quarterly review meeting scheduled for tomorrow at 2:00 PM in the conference
+                    room...</p>
+            </div>
+
+            <div class="notice-card">
+                <h3>New Policy Updates</h3>
+                <p>Please review the updated company policies that have been implemented effective immediately. All
+                    employees are...</p>
             </div>
         </div>
+        <button class="create-notice-fab" title="Create New Notice"
+            onclick="window.location.href=`{% url 'create_blog' %}`">
 
-        <!-- Calendar -->
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <!-- Right Calendar -->
         <div class="calendar-widget">
             <div class="calendar-container">
                 <div class="calendar-header">
                     <h3 id="calendarMonthYear">July 2025</h3>
+                    <button onclick="goToToday()">Today</button>
+                    <div class="nav-buttons">
+                        <button onclick="prevMonth()">‹</button>
+                        <button onclick="nextMonth()">›</button>
+                    </div>
                 </div>
                 <div class="calendar-grid" id="calendarGrid"></div>
             </div>
         </div>
     </div>
 
-    <button class="create-notice-fab" title="Create New Notice" onclick="window.location.href=`{% url 'create_blog' %}`">
+    <!-- Create Notice Floating Action Button -->
+    <button class="create-notice-fab" onclick="openCreateNotice()" title="Create New Notice">
         <i class="fas fa-plus"></i>
     </button>
 
+    <!-- Calendar JS -->
     <script>
+        const calendarGrid = document.getElementById("calendarGrid");
+        const monthYearLabel = document.getElementById("calendarMonthYear");
+        const noticesByDate = document.getElementById("noticesByDate");
+        const noticesList = document.getElementById("noticesList");
+        const selectedDateDisplay = document.getElementById("selectedDate");
+
+        let currentDate = new Date();
+
+        function renderCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+
+            monthYearLabel.textContent = `${monthNames[month]} ${year}`;
+
+            const startDay = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            calendarGrid.innerHTML = "";
+
+            const blankDays = (startDay + 7) % 7;
+            for (let i = 0; i < blankDays; i++) {
+                const empty = document.createElement("div");
+                calendarGrid.appendChild(empty);
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const cell = document.createElement("div");
+                cell.className = "calendar-day";
+                cell.innerText = day;
+
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                cell.addEventListener("click", () => {
+                    selectedDateDisplay.textContent = dateStr;
+                    noticesByDate.style.display = "block";
+
+                    // Simulate fetching notices
+                    noticesList.innerHTML = "<li>Sample notice for selected date</li>";
+                });
+
+                calendarGrid.appendChild(cell);
+            }
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar(currentDate);
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar(currentDate);
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar(currentDate);
+        }
+
         // Highlight active menu item based on current URL
         window.addEventListener('DOMContentLoaded', () => {
             const currentUrl = window.location.href;
@@ -370,32 +672,50 @@
             return true;
         }
 
-        // Calendar Rendering
-        const calendarGrid = document.getElementById("calendarGrid");
-        const monthYearLabel = document.getElementById("calendarMonthYear");
-        let currentDate = new Date();
+        // Create Notice Function
+        function openCreateNotice() {
+            // Remove active from all navigation items
+            document.querySelectorAll('.sidebar ul li').forEach(item => {
+                item.classList.remove('active');
+            });
 
-        function renderCalendar(date) {
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            const monthNames = ["January", "February", "March", "April", "May", "June",
-                                "July", "August", "September", "October", "November", "December"];
-            monthYearLabel.textContent = `${monthNames[month]} ${year}`;
-            const startDay = new Date(year, month, 1).getDay();
-            const totalDays = new Date(year, month + 1, 0).getDate();
+            // Add active to Create Notice
+            document.querySelectorAll('.sidebar ul li a').forEach(link => {
+                if (link.querySelector('span').textContent === 'Create Notice') {
+                    link.parentElement.classList.add('active');
+                }
+            });
 
-            calendarGrid.innerHTML = "";
-            for (let i = 0; i < (startDay + 7) % 7; i++) {
-                calendarGrid.appendChild(document.createElement("div"));
-            }
-            for (let day = 1; day <= totalDays; day++) {
-                const cell = document.createElement("div");
-                cell.className = "calendar-day";
-                cell.innerText = day;
-                calendarGrid.appendChild(cell);
-            }
+            // Navigate to create_blog page
+            window.location.href = "{% url 'create_blog' %}";
         }
+
+        // Add active state toggle for navigation
+        document.querySelectorAll('.sidebar ul li a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                // Remove active class from all items
+                document.querySelectorAll('.sidebar ul li').forEach(item => {
+                    item.classList.remove('active');
+                });
+                // Add active class to clicked item
+                this.parentElement.classList.add('active');
+
+                // Handle navigation
+                const linkText = this.querySelector('span').textContent;
+                if (linkText === 'Create Notice') {
+                    // No alert, just navigate
+                    window.location.href = this.getAttribute('href');
+                } else {
+                    // For other links, allow default navigation
+                    // or explicitly navigate to href
+                    window.location.href = this.getAttribute('href');
+                }
+            });
+        });
+
         renderCalendar(currentDate);
     </script>
+
 </body>
+
 </html>
