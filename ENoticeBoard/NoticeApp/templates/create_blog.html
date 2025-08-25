@@ -1,99 +1,600 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a New Notice</title>
+    <title>Create Notice - AcadAlert</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
-        /* General Styling */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f0ff; /* Soft lilac background */
-            color: #333;
             margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
             display: flex;
-            justify-content: center;
-            align-items: center;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            background-color: #a782e3;
             height: 100vh;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 4px 0 15px rgba(167, 130, 227, 0.3);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #fff;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar ul li.active a {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+            width: calc(100% - 240px);
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, #fff 0%, #f8f6ff 100%);
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(167, 130, 227, 0.15);
+            margin-bottom: 25px;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 28px;
+            background: linear-gradient(45deg, #a782e3, #8b5fbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
 
         /* Form Container */
-        .form-container {
-            background-color: #fff;
+        .create-notice-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(167, 130, 227, 0.1);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 400px;
+            border: 1px solid rgba(167, 130, 227, 0.1);
         }
 
-        /* Heading */
-        .form-container h2 {
-            text-align: center;
-            color: #6a0dad; /* Lilac accent color */
-            margin-bottom: 20px;
-            font-size: 1.8rem;
+        .form-group {
+            margin-bottom: 25px;
         }
 
-        /* Form Elements */
-        form {
-            display: flex;
-            flex-direction: column;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a782e3;
+            font-weight: 600;
+            font-size: 16px;
         }
 
-        form label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #6a0dad;
-        }
-
-        form input[type="text"],
-        form textarea,
-        form select {
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
+            padding: 14px 18px;
+            border: 2px solid rgba(167, 130, 227, 0.2);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #fff;
         }
 
-        form button[type="submit"] {
-            background-color: #6a0dad;
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #a782e3;
+            box-shadow: 0 0 15px rgba(167, 130, 227, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #a782e3, #9b70d9);
             color: white;
-            padding: 10px;
+            padding: 14px 30px;
+            text-decoration: none;
             border: none;
-            border-radius: 5px;
-            font-size: 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            margin: 0 5px;
         }
 
-        form button[type="submit"]:hover {
-            background-color: #5a0099;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(167, 130, 227, 0.4);
         }
 
-        /* Mobile Responsiveness */
-        @media (max-width: 480px) {
-            .form-container {
-                width: 90%;
-                padding: 20px;
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #5a6268);
+        }
+
+        .form-actions {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(167, 130, 227, 0.1);
+        }
+
+        /* Priority Selector */
+        .priority-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .priority-option {
+            display: none;
+        }
+
+        .priority-label {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .priority-option:checked + .priority-label {
+            background: #a782e3;
+            color: white;
+            border-color: #a782e3;
+        }
+
+        .priority-label.low { border-color: #28a745; }
+        .priority-label.medium { border-color: #ffc107; }
+        .priority-label.high { border-color: #dc3545; }
+
+        .priority-option:checked + .priority-label.low {
+            background: #28a745;
+            border-color: #28a745;
+        }
+
+        .priority-option:checked + .priority-label.medium {
+            background: #ffc107;
+            border-color: #ffc107;
+            color: #333;
+        }
+
+        .priority-option:checked + .priority-label.high {
+            background: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* File Upload */
+        .file-upload-wrapper {
+            position: relative;
+        }
+
+        .file-upload-display {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border: 2px dashed rgba(167, 130, 227, 0.3);
+            border-radius: 10px;
+            background: #fafbff;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .file-upload-display i {
+            margin-right: 10px;
+            color: #a782e3;
+        }
+
+        /* Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
             }
 
-            .form-container h2 {
-                font-size: 1.5rem;
+            .main-content {
+                margin-left: 0;
+                width: 100%;
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="form-container">
-        <h2>Create a New Notice</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Submit</button>
-        </form>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>AcadAlert</h2>
+        </div>
+        <ul>
+            <li><a href="/user-dashboard/"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li class="active"><a href="/create-notice/"><i class="fas fa-plus-circle"></i><span>Create Notice</span></a></li>
+            <li><a href="/user-feed/"><i class="fas fa-clipboard-list"></i><span>My Notices</span></a></li>
+            <li><a href="/logout/" onclick="return confirmLogout(event)"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+        </ul>
     </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <h1><i class="fas fa-plus-circle" style="margin-right: 10px;"></i>Create New Notice</h1>
+        </div>
+
+        <!-- Message Area -->
+        <div id="messageArea"></div>
+
+        <div class="create-notice-container">
+            <form id="createNoticeForm" method="POST" action="/create-notice/" enctype="multipart/form-data">
+                <!-- CSRF Token (Django will replace this) -->
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                
+                <div class="form-group">
+                    <label for="title">Notice Title *</label>
+                    <input type="text" id="title" name="title" required placeholder="Enter notice title...">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="academic">Academic</option>
+                            <option value="administrative">Administrative</option>
+                            <option value="event">Event</option>
+                            <option value="exam">Exam</option>
+                            <option value="fee">Fee Related</option>
+                            <option value="general">General</option>
+                            <option value="holiday">Holiday</option>
+                            <option value="sports">Sports</option>
+                            <option value="placement">Placement</option>
+                            <option value="scholarship">Scholarship</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Priority Level</label>
+                        <div class="priority-selector">
+                            <input type="radio" id="priority-low" name="priority" value="low" class="priority-option">
+                            <label for="priority-low" class="priority-label low">Low</label>
+                            
+                            <input type="radio" id="priority-medium" name="priority" value="medium" class="priority-option" checked>
+                            <label for="priority-medium" class="priority-label medium">Medium</label>
+                            
+                            <input type="radio" id="priority-high" name="priority" value="high" class="priority-option">
+                            <label for="priority-high" class="priority-label high">High</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Notice Description *</label>
+                    <textarea id="description" name="description" required 
+                              placeholder="Write your notice content here..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" id="start_date" name="start_date">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="end_date">End Date</label>
+                        <input type="date" id="end_date" name="end_date">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="target_audience">Target Audience</label>
+                    <select id="target_audience" name="target_audience">
+                        <option value="all">All Students</option>
+                        <option value="first-year">First Year</option>
+                        <option value="second-year">Second Year</option>
+                        <option value="third-year">Third Year</option>
+                        <option value="final-year">Final Year</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="staff">Staff</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="attachment">Attachment (Optional)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
+                        <div class="file-upload-display" onclick="document.getElementById('attachment').click()">
+                            <i class="fas fa-paperclip"></i>
+                            <span id="file-name">Click to choose file</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">Tags (Optional)</label>
+                    <input type="text" id="tags" name="tags" 
+                           placeholder="Enter tags separated by commas (e.g., urgent, exam, deadline)">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                        <i class="fas fa-undo" style="margin-right: 8px;"></i>Clear Form
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                        <i class="fas fa-save" style="margin-right: 8px;"></i>Save as Draft
+                    </button>
+                    <button type="submit" class="btn" id="submitBtn">
+                        <i class="fas fa-paper-plane" style="margin-right: 8px;"></i>Submit for Approval
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // File upload handling
+        document.getElementById('attachment').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'Click to choose file';
+            document.getElementById('file-name').textContent = fileName;
+        });
+
+        // Show message function
+        function showMessage(message, type = 'success') {
+            const messageArea = document.getElementById('messageArea');
+            const alertClass = type === 'error' ? 'alert-error' : type === 'info' ? 'alert-info' : 'alert-success';
+            const iconClass = type === 'error' ? 'fa-exclamation-circle' : type === 'info' ? 'fa-info-circle' : 'fa-check-circle';
+            
+            messageArea.innerHTML = `
+                <div class="alert ${alertClass}">
+                    <i class="fas ${iconClass}" style="margin-right: 10px;"></i>
+                    ${message}
+                </div>
+            `;
+            
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    messageArea.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // Form submission with validation
+        document.getElementById('createNoticeForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const originalContent = submitBtn.innerHTML;
+            
+            // Check required fields
+            const title = document.getElementById('title').value.trim();
+            const category = document.getElementById('category').value;
+            const description = document.getElementById('description').value.trim();
+            
+            if (!title || !category || !description) {
+                showMessage('Please fill in all required fields (Title, Category, Description).', 'error');
+                e.preventDefault();
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.innerHTML = '<span class="loading"></span>Submitting...';
+            submitBtn.disabled = true;
+            
+            showMessage('Submitting your notice for admin approval...', 'info');
+            
+            // Let form submit normally to Django backend
+            // The page will reload with success/error message from Django
+        });
+
+        // Clear form function
+        function clearForm() {
+            if (confirm('Are you sure you want to clear the form? All data will be lost.')) {
+                document.getElementById('createNoticeForm').reset();
+                document.getElementById('file-name').textContent = 'Click to choose file';
+                document.getElementById('messageArea').innerHTML = '';
+            }
+        }
+
+        // Save draft function
+        function saveDraft() {
+            const form = document.getElementById('createNoticeForm');
+            const formData = new FormData(form);
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                if (key !== 'csrfmiddlewaretoken' && key !== 'attachment') {
+                    data[key] = value;
+                }
+            }
+            
+            localStorage.setItem('noticeDraft', JSON.stringify({
+                ...data,
+                savedAt: new Date().toISOString()
+            }));
+            
+            showMessage('Draft saved successfully!', 'info');
+        }
+
+        // Load draft on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('start_date').min = today;
+            document.getElementById('end_date').min = today;
+            
+            // Update end date minimum when start date changes
+            document.getElementById('start_date').addEventListener('change', function() {
+                document.getElementById('end_date').min = this.value;
+            });
+            
+            // Load draft if exists
+            const draft = localStorage.getItem('noticeDraft');
+            if (draft) {
+                try {
+                    const draftData = JSON.parse(draft);
+                    if (confirm('Found a saved draft. Would you like to load it?')) {
+                        Object.keys(draftData).forEach(key => {
+                            if (key !== 'savedAt') {
+                                const element = document.getElementById(key) || document.querySelector(`[name="${key}"]`);
+                                if (element) {
+                                    if (element.type === 'radio') {
+                                        const radioElement = document.querySelector(`[name="${key}"][value="${draftData[key]}"]`);
+                                        if (radioElement) radioElement.checked = true;
+                                    } else {
+                                        element.value = draftData[key];
+                                    }
+                                }
+                            }
+                        });
+                        showMessage('Draft loaded successfully!', 'info');
+                    }
+                } catch (e) {
+                    console.error('Error loading draft:', e);
+                }
+            }
+        });
+
+        // Logout confirmation
+        function confirmLogout(event) {
+            if (!confirm("Are you sure you want to logout?")) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        // Display Django messages if any
+        // This will be populated by Django template if there are messages
+        window.onload = function() {
+            // Example of how Django messages would be displayed
+            // Replace this with actual Django template tags in your real implementation
+            /*
+            {% if messages %}
+                {% for message in messages %}
+                    showMessage('{{ message }}', '{{ message.tags }}');
+                {% endfor %}
+            {% endif %}
+            */
+        };
+    </script>
+
 </body>
 </html>
