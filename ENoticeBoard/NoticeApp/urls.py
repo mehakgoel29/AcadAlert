@@ -21,8 +21,8 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), 
          name='password_reset_complete'),
     # User views
+    path('create-notice/', views.create_notice, name='create-notice'),
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
-    path('create-notice/', views.create_blog, name='create_blog'),
     path('my-blogs/', views.my_blogs, name='my_blogs'),
     path('user-feed/', views.user_feed, name='user_feed'),
 

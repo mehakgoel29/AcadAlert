@@ -3,7 +3,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from .models import Blog
+from .models import Notice
 from .forms import BlogForm
+from .forms import NoticeForm
+from django.contrib import messages
+
 
 # Custom login view
 def custom_login_view(request):
@@ -29,21 +33,31 @@ def custom_logout_view(request):
 # User dashboard view
 @login_required
 def user_dashboard(request):
-    return render(request, 'user_dashboard.html')
+    # Sirf approved notices hi bhej rahe hain
+    notices = Notice.objects.filter(approved=True).order_by('-created_at')
+    return render(request, 'user_dashboard.html', {'notices': notices})
+
+
 
 # View to create a new blog post (user side)
 @login_required
-def create_blog(request):
-    if request.method == 'POST':
-        form = BlogForm(request.POST)
+def create_notice(request):
+    if request.method == "POST":
+        form = NoticeForm(request.POST, request.FILES)
         if form.is_valid():
-            blog = form.save(commit=False)  # Don't save to DB yet
-            blog.author = request.user      # Assign the current user as the author
-            blog.save()                     # Save the blog post with is_approved=False by default
-            return redirect('user_feed')    # Redirect to the user feed or a success page
+            notice = form.save(commit=False)
+            notice.author = request.user   # logged-in user
+            notice.approved = False        # by default approval pending
+            notice.save()
+            messages.success(request, "Notice submitted for admin approval!")
+            return redirect("/user-dashboard/")  # ya kahin aur
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
-        form = BlogForm()
-    return render(request, 'create_blog.html', {'form': form})
+        form = NoticeForm()
+
+    return render(request, "create_blog.html", {"form": form})
+
 
 # View to display user's blogs
 @login_required
@@ -53,8 +67,10 @@ def my_blogs(request):
 
 # View to display approved blogs on the user feed
 def user_feed(request):
-    approved_blogs = Blog.objects.filter(is_approved=True)  # Filter by approved blogs
-    return render(request, 'user_feed.html', {'blogs': approved_blogs})
+    blogs = Notice.objects.filter(author=request.user).order_by('-created_at')
+    return render(request, 'user_feed.html', {'blogs': blogs})
+
+
 
 # Admin dashboard view
 @user_passes_test(lambda u: u.is_superuser)

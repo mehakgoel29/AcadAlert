@@ -525,7 +525,8 @@
         <ul>
             <li class="active"><a href="{% url 'user_dashboard' %}"><i
                         class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
-            <li><a href="{% url 'create_blog' %}"><i class="fas fa-plus-circle"></i><span>Create Notice</span></a></li>
+            <li><a href="{% url 'create-notice' %}"><i class="fas fa-plus-circle"></i><span>Create Notice</span></a>
+            </li>
             <li><a href="{% url 'user_feed' %}"><i class="fas fa-clipboard-list logo-icon"></i><span>My
                         Notices</span></a></li>
             <li><a href="{% url 'logout' %}" onclick="return confirmLogout(event)"><i
@@ -548,27 +549,29 @@
             <div class="notice-card">
                 <h3>Your Dashboard</h3>
                 <p>Here you can see your recent activity and notices.</p>
-                <a href="{% url 'create_blog' %}" class="btn">Create New Notice</a>
+                <a href="{% url 'create-notice' %}" class="btn">Create New Notice</a>
             </div>
 
-            <!-- Example notices -->
+            <!-- ✅ Replace static examples with real notices -->
+            {% for notice in notices %}
             <div class="notice-card">
-                <h3>Important Meeting Reminder</h3>
-                <p>Don't forget about the quarterly review meeting scheduled for tomorrow at 2:00 PM in the conference
-                    room...</p>
+                <h3>{{ notice.title }}</h3>
+                <p>{{ notice.content }}</p>
+                {% if notice.description %}
+                <p><b>Description:</b> {{ notice.description }}</p>
+                {% endif %}
+                <p><b>Content:</b> {{ notice.content }}</p>
+                <small>Category: {{ notice.category }}</small><br>
+                <small>Created on {{ notice.created_at }}</small>
             </div>
-
+            {% empty %}
             <div class="notice-card">
-                <h3>New Policy Updates</h3>
-                <p>Please review the updated company policies that have been implemented effective immediately. All
-                    employees are...</p>
+                <h3>No Notices Yet</h3>
+                <p>You haven’t created any notices.</p>
             </div>
+            {% endfor %}
         </div>
-        <button class="create-notice-fab" title="Create New Notice"
-            onclick="window.location.href=`{% url 'create_blog' %}`">
 
-            <i class="fas fa-plus"></i>
-        </button>
 
         <!-- Right Calendar -->
         <div class="calendar-widget">
@@ -687,7 +690,9 @@
             });
 
             // Navigate to create_blog page
-            window.location.href = "{% url 'create_blog' %}";
+            // Navigate to create_notice page
+            window.location.href = "{% url 'create-notice' %}";
+
         }
 
         // Add active state toggle for navigation

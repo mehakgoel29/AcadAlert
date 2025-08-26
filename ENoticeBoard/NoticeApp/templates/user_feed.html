@@ -657,7 +657,7 @@
         </div>
         <ul>
             <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
-            <li><a href="{% url 'create_blog' %}"><i class="fas fa-plus-circle"></i><span>Create Notice</span></a></li>
+            <li><a href="{% url 'create-notice' %}"><i class="fas fa-plus-circle"></i><span>Create Notice</span></a></li>
             <li class="active"><a href="{% url 'user_feed' %}"><i class="fas fa-clipboard-list"></i><span>My Notices</span></a></li>
             <li><a href="{% url 'logout' %}" onclick="return confirmLogout(event)"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
         </ul>
@@ -683,23 +683,13 @@
                         
                         <div class="filters-row">
                             <div class="filter-group">
-                                <label for="authorFilter">Author:</label>
-                                <select id="authorFilter" class="filter-select">
-                                    <option value="">All Authors</option>
-                                </select>
-                            </div>
-                            
-                            <div class="filter-group">
-                                <label for="dateFilter">Date:</label>
-                                <select id="dateFilter" class="filter-select">
-                                    <option value="">All Dates</option>
-                                    <option value="today">Today</option>
-                                    <option value="week">This Week</option>
-                                    <option value="month">This Month</option>
-                                    <option value="older">Older</option>
-                                </select>
-                            </div>
-                            
+                                <label for="statusFilter">Status:</label>
+                                <select id="statusFilter" class="filter-select">
+                                    <option value="">All Status</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="pending">Pending</option>
+                                </select>                                  
+                            </div>                                               
                             <div class="pin-filter">
                                 <label for="pinFilter">Pinned Only:</label>
                                 <label class="pin-toggle">
@@ -723,17 +713,38 @@
             {% load tz %}
             <div id="blogContainer">
                 {% for blog in blogs %}
-                    <div class="blog-card" data-author="{{ blog.author }}" data-title="{{ blog.title|lower }}" data-content="{{ blog.content|lower }}" data-date="{{ blog.created_at|date:'Y-m-d' }}" data-pinned="false">
+                <div class="blog-card"
+                data-author="{{ blog.author }}"
+                data-title="{{ blog.title|lower }}"
+                data-content="{{ blog.content|lower }}"
+                data-date="{{ blog.created_at|date:'Y-m-d' }}"
+                data-status="{{ blog.status|lower }}"
+                data-pinned="false">
+           
                         <i class="fas fa-thumbtack pin-icon" title="Click to pin/unpin this notice"></i>
                         <h3 class="blog-title">{{ blog.title }}</h3>
+
+                        {% if blog.description %}
+                        <p><b>Description:</b> {{ blog.description }}</p>
+                        {% endif %}
+                        
                         <p class="blog-content">{{ blog.content }}</p>
-                        <small><i class="fas fa-user"></i> by <span class="blog-author">{{ blog.author }}</span> on {{ blog.created_at|localtime|date:"d-m-Y h:i A" }}</small>
-                    </div>
+                        <small>
+                            <p>   <strong>Status:</strong> 
+                                {% if blog.status == "approved" %}
+                                    <span style="color: green; font-weight: bold;">Approved</span>
+                                {% elif blog.status == "pending" %}
+                                    <span style="color: orange; font-weight: bold;">Pending</span>
+                                {% else %}
+                                    <span style="color: gray; font-weight: bold;">Draft</span>
+                                {% endif %}</p>
+                        </small>
+                        </div>
                 {% empty %}
                     <div class="no-notices">
                         <p><i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i></p>
                         <p>No notices available at the moment.</p>
-                        <a href="{% url 'create_blog' %}" class="btn">Create a New Notice</a>
+                        <a href="{% url 'create-notice' %}" class="btn">Create a New Notice</a>
                     </div>
                 {% endfor %}
             </div>
@@ -759,7 +770,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const clearSearchBtn = document.getElementById('clearSearch');
-            const authorFilter = document.getElementById('authorFilter');
+            const statusFilter = document.getElementById('statusFilter');
             const dateFilter = document.getElementById('dateFilter');
             const pinFilter = document.getElementById('pinFilter');
             const resetFiltersBtn = document.getElementById('resetFilters');
@@ -772,15 +783,7 @@
             // Load pinned notices from localStorage
             loadPinnedNotices();
 
-            // Populate author filter
-            const authors = [...new Set(Array.from(blogCards).map(card => card.dataset.author))];
-            authors.forEach(author => {
-                const option = document.createElement('option');
-                option.value = author;
-                option.textContent = author;
-                authorFilter.appendChild(option);
-            });
-
+           
             // Pin functionality
             blogCards.forEach(card => {
                 const pinIcon = card.querySelector('.pin-icon');
@@ -811,7 +814,7 @@
             });
 
             // Filter change events
-            authorFilter.addEventListener('change', filterAndSearch);
+            statusFilter.addEventListener('change', filterAndSearch);
             dateFilter.addEventListener('change', filterAndSearch);
             pinFilter.addEventListener('change', filterAndSearch);
 
@@ -908,84 +911,54 @@
                 cards.forEach(card => container.appendChild(card));
             }
 
-            function filterAndSearch() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                const selectedAuthor = authorFilter.value;
-                const selectedDateRange = dateFilter.value;
-                const showPinnedOnly = pinFilter.checked;
-                let visibleCount = 0;
+    function filterAndSearch() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const selectedStatus = statusFilter.value;
+    const showPinnedOnly = pinFilter.checked;
+    let visibleCount = 0;
 
-                blogCards.forEach(card => {
-                    let isVisible = true;
-                    
-                    // Search filter
-                    if (searchTerm) {
-                        const title = card.dataset.title;
-                        const content = card.dataset.content;
-                        const author = card.dataset.author.toLowerCase();
-                        
-                        if (!title.includes(searchTerm) && 
-                            !content.includes(searchTerm) && 
-                            !author.includes(searchTerm)) {
-                            isVisible = false;
-                        }
-                    }
-                    
-                    // Author filter
-                    if (selectedAuthor && card.dataset.author !== selectedAuthor) {
-                        isVisible = false;
-                    }
-                    
-                    // Date filter
-                    if (selectedDateRange) {
-                        const cardDate = new Date(card.dataset.date);
-                        const today = new Date();
-                        const diffTime = today - cardDate;
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        
-                        switch(selectedDateRange) {
-                            case 'today':
-                                if (diffDays > 1) isVisible = false;
-                                break;
-                            case 'week':
-                                if (diffDays > 7) isVisible = false;
-                                break;
-                            case 'month':
-                                if (diffDays > 30) isVisible = false;
-                                break;
-                            case 'older':
-                                if (diffDays <= 30) isVisible = false;
-                                break;
-                        }
-                    }
-                    
-                    // Pin filter
-                    if (showPinnedOnly && card.dataset.pinned !== 'true') {
-                        isVisible = false;
-                    }
-                    
-                    // Show/hide card
-                    if (isVisible) {
-                        card.classList.remove('hidden');
-                        visibleCount++;
-                        highlightSearchTerm(card, searchTerm);
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
+    blogCards.forEach(card => {
+        let isVisible = true;
 
-                // Update results count
-                updateResultsCount(visibleCount, blogCards.length);
-                
-                // Show/hide no results message
-                if (visibleCount === 0 && blogCards.length > 0) {
-                    noResultsMessage.style.display = 'block';
-                    blogContainer.style.display = 'none';
-                } else {
-                    noResultsMessage.style.display = 'none';
-                    blogContainer.style.display = 'block';
-                }
+        // 🔍 Search filter
+        if (searchTerm) {
+            const title = card.dataset.title;
+            const content = card.dataset.content;
+
+            if (!title.includes(searchTerm) && !content.includes(searchTerm)) {
+                isVisible = false;
             }
+        }
+
+        // ✅ Status filter
+        if (selectedStatus && card.dataset.status !== selectedStatus) {
+            isVisible = false;
+        }
+
+        // 📌 Pinned filter
+        if (showPinnedOnly && card.dataset.pinned !== "true") {
+            isVisible = false;
+        }
+
+        // Apply visibility
+        if (isVisible) {
+            card.classList.remove("hidden");
+            visibleCount++;
+        } else {
+            card.classList.add("hidden");
+        }
+    });
+
+    // Update results info
+    if (visibleCount === 0) {
+        noResultsMessage.style.display = "block";
+        blogContainer.style.display = "none";
+    } else {
+        noResultsMessage.style.display = "none";
+        blogContainer.style.display = "block";
+        resultsCount.textContent = `Showing ${visibleCount} notice(s)`;
+    }
+}
 
             function highlightSearchTerm(card, searchTerm) {
                 const titleElement = card.querySelector('.blog-title');
@@ -1062,6 +1035,18 @@
             // Initialize results count
             updateResultsCount(blogCards.length, blogCards.length);
         });
+        document.getElementById('statusFilter').addEventListener('change', function () {
+    const selectedStatus = this.value.toLowerCase();
+    document.querySelectorAll('.blog-card').forEach(card => {
+        const status = card.querySelector('.blog-meta').innerText.toLowerCase();
+        if (selectedStatus === "" || status.includes(selectedStatus)) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+});
+
     </script>
 </body>
 </html>
